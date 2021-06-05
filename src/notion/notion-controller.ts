@@ -1,4 +1,5 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import BaseException from 'src/exceptions/base-exception';
 import Controller from '../interfaces/controller-interface';
 
 class NotionController implements Controller {
@@ -15,7 +16,9 @@ class NotionController implements Controller {
     this.router.get(`${this.path}`, this.helloWorld);
   }
 
-  private helloWorld = async (req: Request, res: Response) => {
+  private helloWorld = async (req: Request, res: Response, next: NextFunction) => {
+    // eslint-disable-next-line no-constant-condition
+    if (true) next(new BaseException(400, 'this is done on purpose'));
     res.send('hello world');
   };
 }
