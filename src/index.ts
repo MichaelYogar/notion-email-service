@@ -1,20 +1,9 @@
 import { config } from 'dotenv';
-import express from 'express';
-import routes from './routes';
-
-const app = express();
+import App from './app';
+import NotionController from './notion/notion-controller';
 
 config();
 
-const port = 5000 || process.env.PORT;
+const app = new App([new NotionController()]);
 
-/* ---------- MIDDLEWARE ---------- */
-app.use(urlencoded({ extended: false }));
-app.use(json());
-
-/* ---------- ROUTES ---------- */
-app.use(routes);
-
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
-});
+app.listen();
