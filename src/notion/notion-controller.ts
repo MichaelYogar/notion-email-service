@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import Logger from '../logger';
 import BaseException from '../exceptions/base-exception';
 import Controller from '../interfaces/controller-interface';
 
@@ -18,6 +19,7 @@ class NotionController implements Controller {
 
   private helloWorld = async (req: Request, res: Response, next: NextFunction) => {
     // eslint-disable-next-line no-constant-condition
+    Logger.info('test info log');
     if (true) {
       next(new BaseException(400, 'this is done on purpose'));
     } else {
