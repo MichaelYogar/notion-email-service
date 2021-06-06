@@ -23,6 +23,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'import/extensions': 'off',
     'import/no-unresolved': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     'no-console': 'off',
     'import/order': [
       'error',
