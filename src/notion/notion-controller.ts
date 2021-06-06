@@ -6,6 +6,14 @@ import Constants from '../config/constants';
 const axios = require('axios').default;
 
 class NotionController implements Controller {
+  api = axios.create({
+    baseURL: Constants.NOTION_PREFIX,
+    headers: {
+      Authorization: `Bearer ${process.env.NOTION_API_KEY}`,
+      'Notion-Version': Constants.NOTION_VERSION,
+    },
+  });
+
   public path = '/notion';
 
   public router = Router();
@@ -22,14 +30,9 @@ class NotionController implements Controller {
   private getDatabaseList = async (req: Request, res: Response, next: NextFunction) => {
     Logger.info('getDatabaseList called');
     try {
-      const resp = await axios.get(`${Constants.NOTION_PREFIX}/databases`, {
-        headers: {
-          Authorization: `Bearer ${process.env.NOTION_API_KEY}`,
-          'Notion-Version': Constants.NOTION_VERSION,
-        },
-      });
+      const resp = await this.api.get(`/databases`);
       res.send(resp.data);
-    } catch (err) {
+    } catch (err: any) {
       next(new BaseException(400, err.message));
     }
   };
