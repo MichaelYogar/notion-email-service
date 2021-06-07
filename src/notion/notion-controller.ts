@@ -10,7 +10,7 @@ class NotionController implements Controller {
 
   public path = '/notion';
 
-  public router = Router();
+  public router: Router = Router();
 
   constructor() {
     this.initializeRoutes();
@@ -27,6 +27,8 @@ class NotionController implements Controller {
     this.router.get(`${this.path}/getDatabaseList`, this.getDatabaseList);
     this.router.get(`${this.path}/getDatabase`, this.getDatabase);
     this.router.get(`${this.path}/getPage`, this.getPage);
+    this.router.get(`${this.path}/getBlockChildren`, this.getBlockChildren);
+    this.router.get(`${this.path}/getUser`, this.getUser);
   }
 
   private getDatabaseList = async (req: Request, res: Response, next: NextFunction) => {
@@ -46,6 +48,30 @@ class NotionController implements Controller {
 
     try {
       const resp = await this.#api.get(`/databases/${process.env.DATABASE_ID}`);
+      res.send(resp.data);
+    } catch (err: any) {
+      Logger.error(err);
+      next(new BaseException(400, err.message));
+    }
+  };
+
+  private getBlockChildren = async (req: Request, res: Response, next: NextFunction) => {
+    Logger.info('getBlockChildren called');
+
+    try {
+      const resp = await this.#api.get(`/blocks/${process.env.BLOCK_ID}/children`);
+      res.send(resp.data);
+    } catch (err: any) {
+      Logger.error(err);
+      next(new BaseException(400, err.message));
+    }
+  };
+
+  private getUser = async (req: Request, res: Response, next: NextFunction) => {
+    Logger.info('getUser called');
+
+    try {
+      const resp = await this.#api.get(`/users/${process.env.USER_ID}`);
       res.send(resp.data);
     } catch (err: any) {
       Logger.error(err);
