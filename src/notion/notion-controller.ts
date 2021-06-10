@@ -1,15 +1,18 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Client } from '@notionhq/client';
+import { Page } from '@notionhq/client/build/src/api-types';
 import Logger from '../logger';
 import BaseException from '../exceptions/base-exception';
 import Controller from '../interfaces/controller-interface';
 
 class NotionController implements Controller {
-  #api: Client;
-
   public path = '/notion';
 
   public router: Router = Router();
+
+  #api: Client;
+
+  #pages: Page[];
 
   #key: string = process.env.NOTION_API_KEY as string;
 
@@ -19,6 +22,7 @@ class NotionController implements Controller {
     this.#api = new Client({
       auth: this.#key,
     });
+    this.#pages = [];
   }
 
   private initializeRoutes() {
@@ -105,11 +109,16 @@ class NotionController implements Controller {
     try {
       const databaseId = process.env.DATABASE_ID as string;
       const { results } = await this.#api.databases.query({ database_id: databaseId });
+      this.#pages = results;
       res.send(results);
     } catch (err: any) {
       Logger.error(err);
       next(new BaseException(400, err.message));
     }
+  };
+
+  private getterPages = (): Page[] => {
+    return this.#pages;
   };
 }
 
