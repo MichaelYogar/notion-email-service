@@ -28,13 +28,14 @@ class NotionController implements Controller {
     this.router.get(`${this.path}/getBlockChildren`, this.getBlockChildren);
     this.router.get(`${this.path}/getUser`, this.getUser);
     this.router.get(`${this.path}/getUserList`, this.getUserList);
+
+    this.router.get(`${this.path}/queryDatabase`, this.queryDatabase);
   }
 
   private getDatabase = async (req: Request, res: Response, next: NextFunction) => {
     Logger.info('getDatabase called');
 
-    const databaseId = '';
-
+    const databaseId = process.env.DATABASE_ID as string;
     try {
       const resp = await this.#api.databases.retrieve({
         database_id: databaseId,
@@ -93,6 +94,18 @@ class NotionController implements Controller {
       const pageId = '';
       const resp = await this.#api.pages.retrieve({ page_id: pageId });
       res.send(resp);
+    } catch (err: any) {
+      Logger.error(err);
+      next(new BaseException(400, err.message));
+    }
+  };
+
+  private queryDatabase = async (req: Request, res: Response, next: NextFunction) => {
+    Logger.info('queryDatabase called');
+    try {
+      const databaseId = process.env.DATABASE_ID as string;
+      const { results } = await this.#api.databases.query({ database_id: databaseId });
+      res.send(results);
     } catch (err: any) {
       Logger.error(err);
       next(new BaseException(400, err.message));
